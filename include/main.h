@@ -10,4 +10,6 @@
 
 #define CMD_PWM 0
 
+DigitalIn Killswitch(KILLSWITCH);
+
 #endif

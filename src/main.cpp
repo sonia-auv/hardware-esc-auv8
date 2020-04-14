@@ -6,10 +6,9 @@
 
 #include "main.h"
 
-InterruptIn button(PC_13);
+RS485 rs(SLAVE_ESC);
 PwmOut pwm[8] = {PwmOut (PWM_1), PwmOut (PWM_2), PwmOut (PWM_3), PwmOut (PWM_4), 
   PwmOut (PWM_5), PwmOut (PWM_6), PwmOut (PWM_7), PwmOut (PWM_8)};
-DigitalOut flash(LED2);
 Thread threadpwm;
 
 void function_pwm ()
@@ -27,8 +26,7 @@ void function_pwm ()
 
   while(1)
   {
-    flash = !flash;
-    if (RS485::read(cmd_array,nb_commands,buffer_receiver_pwm) == size)
+    if (rs.read(cmd_array,nb_commands,buffer_receiver_pwm) == size && Killswitch == 0)
     {
       setALL_pulsewidth(pwm,buffer_receiver_pwm,size);
     }
@@ -37,10 +35,6 @@ void function_pwm ()
 
 int main()
 {
-
-  RS485::init(SLAVE_ESC_PWM);
-
   threadpwm.start(function_pwm);
   threadpwm.set_priority(osPriorityHigh);
-
 }
