@@ -6,10 +6,9 @@
 
 #include "main.h"
 
-InterruptIn button(PC_13);
+RS485 rs(SLAVE_ESC);
 PwmOut pwm[8] = {PwmOut (PWM_1), PwmOut (PWM_2), PwmOut (PWM_3), PwmOut (PWM_4), 
   PwmOut (PWM_5), PwmOut (PWM_6), PwmOut (PWM_7), PwmOut (PWM_8)};
-DigitalOut flash(LED2);
 Thread threadpwm;
 
 void function_pwm ()
@@ -18,29 +17,32 @@ void function_pwm ()
   uint8_t cmd_array[1] = {CMD_PWM};
   uint8_t buffer_receiver_pwm[255];
   uint8_t nb_commands = 1;
-  uint8_t size = 8;
+  uint8_t size_command = 16;
+  
+  uint8_t nb_motor = 8;
+  uint16_t data_pwm;
+  uint8_t i;
 
-  for (uint8_t i =0; i<size; ++i)
+  for (uint8_t i =0; i<nb_motor; ++i)
   {
     pwm[i].pulsewidth_us(neutralDuty);
   }
 
   while(1)
   {
-    flash = !flash;
-    if (RS485::read(cmd_array,nb_commands,buffer_receiver_pwm) == size)
+    if (rs.read(cmd_array,nb_commands,buffer_receiver_pwm) == size_command && Killswitch == 0)
     {
-      setALL_pulsewidth(pwm,buffer_receiver_pwm,size);
+      for(uint8_t i=0; i<nb_motor; ++i)
+      {
+        data_pwm = buffer_receiver_pwm[(2*i)+1]*256+buffer_receiver_pwm[2*i];
+        pwm[i].pulsewidth_us(data_pwm);
+      }
     }
   }
 }
 
 int main()
 {
-
-  RS485::init(SLAVE_ESC_PWM);
-
   threadpwm.start(function_pwm);
   threadpwm.set_priority(osPriorityHigh);
-
 }
