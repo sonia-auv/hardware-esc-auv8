@@ -8,8 +8,6 @@
 #include "RS485/RS485.h"
 #include "RS485/RS485_definition.h"
 
-#define CMD_PWM 0
-
 DigitalIn Killswitch(KILLSWITCH);
 
 #endif
