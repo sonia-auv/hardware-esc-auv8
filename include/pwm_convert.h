@@ -8,6 +8,7 @@
 #define neutralDuty 1500
 #define mMax 1900
 #define mMin 1100
+#define period 2000
 
 // Private
 int calcul_pwm(uint8_t duty);

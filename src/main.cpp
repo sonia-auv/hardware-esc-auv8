@@ -26,6 +26,7 @@ void function_pwm ()
 
   for (uint8_t i =0; i<nb_motor; ++i)
   {
+    pwm[i].period_us(period);
     pwm[i].pulsewidth_us(neutralDuty);
   }
 
