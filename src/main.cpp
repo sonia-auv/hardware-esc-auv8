@@ -20,11 +20,13 @@ void function_pwm ()
   uint8_t size_command = 16;
   
   uint8_t nb_motor = 8;
-  uint16_t data_pwm;
+  uint16_t data_pwm_1;
+  uint16_t data_pwm_2;
   uint8_t i;
 
   for (uint8_t i =0; i<nb_motor; ++i)
   {
+    pwm[i].period_us(period);
     pwm[i].pulsewidth_us(neutralDuty);
   }
 
@@ -34,8 +36,9 @@ void function_pwm ()
     {
       for(uint8_t i=0; i<nb_motor; ++i)
       {
-        data_pwm = buffer_receiver_pwm[(2*i)+1]*256+buffer_receiver_pwm[2*i];
-        pwm[i].pulsewidth_us(data_pwm);
+        data_pwm_1 = buffer_receiver_pwm[(2*i)+1];
+        data_pwm_2 = buffer_receiver_pwm[2*i]*256;
+        pwm[i].pulsewidth_us(data_pwm_1+data_pwm_2);
       }
     }
   }
